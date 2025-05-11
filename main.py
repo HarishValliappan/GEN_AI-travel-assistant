@@ -30,11 +30,11 @@ if st.button("🚀 Generate Travel Plan"):
 
         # Initialize Tasks
         loc_task = location_task(location_expert, from_city, destination_city, date_from, date_to)
-        time.sleep(5)
+        print(loc_task)
         guid_task = guide_task(guide_expert, destination_city, interests, date_from, date_to)
-        time.sleep(5)
+        print(guid_task)
         plan_task = planner_task([loc_task, guid_task], planner_expert, destination_city, interests, date_from, date_to)
-        time.sleep(5)
+
 
         # Define Crew
         crew = Crew(
@@ -43,12 +43,15 @@ if st.button("🚀 Generate Travel Plan"):
             process=Process.sequential,
             full_output=True,
             verbose=True,
+            token_usage=True,
+            planning_llm=True
         )
+        
 
         import time
         # Run Crew AI
         result = crew.kickoff()
-        time.sleep(5)
+        time.sleep(30)
         # Display Results
         st.subheader("✅ Your AI-Powered Travel Plan")
         st.markdown(result)
