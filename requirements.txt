@@ -5,4 +5,4 @@ langchain
 langchain_community
 crewai_tools
 duckduckgo-search
-groq
+os
