@@ -1,15 +1,9 @@
-from crewai import Agent
-from TravelTools import search_web_tool
-#from TravelTools import search_web_tool, web_search_tool
-from crewai import LLM
-#from langchain_ollama.llms import OllamaLLM
-
-
-# Initialize LLM
-llm = LLM(model="groq/llama-3.1-70b-versatile",
-    api_key = "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"
-)
-
+from crewai import Agent, LLM
+from TravelTools import search_web_tool  # Ensure this tool is correctly imported and configured
+import os
+# Initialize LLM once
+API_KEY=os.environ.get(GEMINI_API_KEYS)
+llm = LLM(model="gemini/gemini-2.0-flash",temperature=0.7,api_key=API_KEY)
 
 # Agents
 guide_expert = Agent(
@@ -19,21 +13,21 @@ guide_expert = Agent(
     tools=[search_web_tool],
     verbose=True,
     max_iter=1,
-    llm=LLM(model="groq/llama-3.3-70b-versatile",api_key = "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"),
+    llm=llm,  # Use the initialized LLM
     allow_delegation=False,
-    max_tokens=50,
+    max_tokens=300,
 )
 
 location_expert = Agent(
     role="Travel Trip Expert",
     goal="Provides travel logistics and essential information.",
     backstory="A seasoned traveler who knows everything about different cities.",
-    tools=[search_web_tool],  
+    tools=[search_web_tool],
     verbose=True,
     max_iter=1,
-    llm= LLM(model="groq/llama-3.3-70b-versatile",api_key = "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"),   # ChatOpenAI(temperature=0, model="gpt-4o-mini"),
+    llm=llm,  # Use the initialized LLM
     allow_delegation=False,
-    max_tokens=50
+    max_tokens=300,
 )
 
 planner_expert = Agent(
@@ -43,7 +37,7 @@ planner_expert = Agent(
     tools=[search_web_tool],
     verbose=True,
     max_iter=1,
-    llm=LLM(model="groq/llama-3.3-70b-versatile",api_key = "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"),
+    llm=llm,  # Use the initialized LLM
     allow_delegation=False,
-    max_tokens=50,
+    max_tokens=300,
 )
