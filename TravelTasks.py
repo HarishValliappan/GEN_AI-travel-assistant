@@ -6,15 +6,18 @@ def location_task(agent, from_city, destination_city, date_from, date_to):
         expected_output="A detailed markdown report with relevant travel data.",
         agent=agent,
         output_file='city_report.md',
+        max_token=200
     )
 
 def guide_task(agent, destination_city, interests, date_from, date_to):
-    return Task(
+    tsk= Task(
         description=f"""Create a travel guide for {destination_city} ({date_from} - {date_to}), recommending top 5 attractions and food based on {interests}.""",
         expected_output="A markdown itinerary including attractions, food, and activities.",
         agent=agent,
         output_file='guide_report.md',
+        max_token=200
     )
+    return tsk
 
 def planner_task(context, agent, destination_city, interests, date_from, date_to):
     return Task(
