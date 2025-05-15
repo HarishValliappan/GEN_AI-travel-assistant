@@ -1,4 +1,4 @@
-# GEN_AI-travel-assistant
+# Wayfarer-AI
 
 An intelligent travel planning assistant powered by [CrewAI](https://docs.crewai.com/), enabling personalized, multi-agent based itinerary generation. This application consists of a backend and a frontend. The backend utilizes generative AI to suggest destinations, hotels, and activities based on user preferences such as travel type, destination, budget, and month of travel. The frontend provides an interactive user interface to access these recommendations.
 
