@@ -17,7 +17,6 @@ Check out the website screenshots:
   - Travel destinations
   - Budget-friendly hotels
   - Local activities & experiences
-- 🛠️ Built with Streamlit for an interactive UI
 - 📡 Uses powerful LLMs for dynamic task execution
 
 
@@ -43,11 +42,11 @@ GEN_AI-travel-assistant/
 
 ## 🧠 Agents
 
-Defined in `agents.py`, the following agents collaborate using the CrewAI framework:
+Defined in `backend/TravelAgents.py`, the following agents collaborate using the CrewAI framework:
 
-- **Destination Expert**: Recommends travel places based on preferences
-- **Hotel Finder**: Suggests budget-friendly accommodations
-- **Activity Planner**: Recommends activities based on travel type and location
+- **City Local Guide Expert**: Provides information on things to do in the city based on user interests.
+- **Travel Trip Expert**: Provides travel logistics and essential information.
+- **Travel Planning Expert**: Compiles all gathered information to create a travel plan.
 
 Each agent uses a shared or individual LLM instance to complete its task.
 
@@ -55,11 +54,11 @@ Each agent uses a shared or individual LLM instance to complete its task.
 
 ## 📝 Tasks
 
-Defined in `tasks.py`, each task is mapped to an agent:
+Defined in `backend/TravelTasks.py`, each task is mapped to an agent:
 
-- `recommend_destination_task`
-- `recommend_hotels_task`
-- `recommend_activities_task`
+- `location_task`
+- `guide_task`
+- `planner_task`
 
 Tasks are executed in parallel using `crew.kickoff()`.
 
@@ -67,7 +66,7 @@ Tasks are executed in parallel using `crew.kickoff()`.
 
 ## 🎯 How It Works
 
-1. The user provides travel inputs via the Streamlit UI (`app.py`)
+1. The user provides travel inputs via the frontend.
 2. Agents are initialized with LLM capabilities
 3. Each agent executes its task independently
 4. Results are combined and displayed in the app
