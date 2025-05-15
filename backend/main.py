@@ -1,68 +1,43 @@
-from backend.TravelAgents import guide_expert, location_expert, planner_expert
-from backend.TravelTasks import location_task, guide_task, planner_task
+from TravelAgents import guide_expert, location_expert, planner_expert
+from TravelTasks import location_task, guide_task, planner_task
 from crewai import Crew, Process
 import time
-import streamlit as st
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-# Streamlit App Title
-st.title("🌍 AI-Powered Trip Planner")
+app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-st.markdown("""
-💡 **Plan your next trip with AI!**  
-Enter your travel details below, and our AI-powered travel assistant will create a personalized itinerary including:
- Best places to visit 🎡   Accommodation & budget planning 💰
- Local food recommendations 🍕   Transportation & visa details 🚆
-""")
+@app.route('/api/recommendations', methods=['POST'])
+def get_recommendations():
+    data = request.get_json()
+    from_city = data.get('from_city', 'India')
+    destination_city = data.get('destination_city', 'Rome')
+    date_from = data.get('date_from')
+    date_to = data.get('date_to')
+    interests = data.get('interests', 'sightseeing and good food')
 
-# User Inputs
-from_city = st.text_input("🏡 From City", "India")
-destination_city = st.text_input("✈️ Destination City", "Rome")
-date_from = st.date_input("📅 Departure Date")
-date_to = st.date_input("📅 Return Date")
-interests = st.text_area("🎯 Your Interests (e.g., sightseeing, food, adventure)", "sightseeing and good food")
+    # Initialize Tasks
+    loc_task = location_task(location_expert, from_city, destination_city, date_from, date_to)
+    guid_task = guide_task(guide_expert, destination_city, interests, date_from, date_to)
+    plan_task = planner_task([loc_task, guid_task], planner_expert, destination_city, interests, date_from, date_to)
 
-# Button to run CrewAI
-if st.button("🚀 Generate Travel Plan"):
-    if not from_city or not destination_city or not date_from or not date_to or not interests:
-        st.error("⚠️ Please fill in all fields before generating your travel plan.")
-    else:
-        st.write("⏳ AI is preparing your personalized travel itinerary... Please wait.")
+    # Define Crew
+    crew = Crew(
+        agents=[location_expert, guide_expert, planner_expert],
+        tasks=[loc_task, guid_task, plan_task],
+        process=Process.sequential,
+        full_output=True,
+        verbose=True,
+        token_usage=True,
+        planning_llm=True
+    )
 
-        # Initialize Tasks
-        loc_task = location_task(location_expert, from_city, destination_city, date_from, date_to)
-        print(loc_task)
-        guid_task = guide_task(guide_expert, destination_city, interests, date_from, date_to)
-        print(guid_task)
-        plan_task = planner_task([loc_task, guid_task], planner_expert, destination_city, interests, date_from, date_to)
+    # Run Crew AI
+    result = crew.kickoff()
+    time.sleep(10)
 
+    return jsonify({'recommendations': str(result)})
 
-        # Define Crew
-        crew = Crew(
-            agents=[location_expert, guide_expert, planner_expert],
-            tasks=[loc_task, guid_task, plan_task],
-            process=Process.sequential,
-            full_output=True,
-            verbose=True,
-            token_usage=True,
-            planning_llm=True
-        )
-        
-
-        import time
-        # Run Crew AI
-        result = crew.kickoff()
-        time.sleep(30)
-        # Display Results
-        st.subheader("✅ Your AI-Powered Travel Plan")
-        st.markdown(result)
-
-
-        # Ensure result is a string
-        travel_plan_text = str(result)  # ✅ Convert CrewOutput to string
-
-        st.download_button(
-            label="📥 Download Travel Plan",
-            data=travel_plan_text,  # ✅ Now passing a valid string
-            file_name=f"Travel_Plan_{destination_city}.txt",
-            mime="text/plain"
-        )
+if __name__ == '__main__':
+    app.run(port=5000)

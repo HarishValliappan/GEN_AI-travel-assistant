@@ -6,7 +6,7 @@
     </video>
     <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.5);">
       <div class="text-center text-white">
-        <h1 class="text-6xl font-bold mb-4">WayfarerAI</h1>
+        <h1 class="text-9xl font-bold mb-8  h1">WayfarerAI</h1>
         <p class="text-xl mb-8">Your AI-powered travel companion.</p>
         <button
   @click="$emit('explore')"

@@ -43,14 +43,23 @@
               placeholder="Enter your destination"
             />
           </div>
-
-          <!-- Normal Single-Date Calendar -->
+          
           <div>
-            <label for="travel_date" class="block text-gray-300 text-sm font-semibold mb-1">Travel Date:</label>
+            <label for="start_date" class="block text-gray-300 text-sm font-semibold mb-1">Start Date:</label>
             <input
               type="date"
-              id="travel_date"
-              v-model="travel_date"
+              id="start_date"
+              v-model="start_date"
+              class="w-full py-2 px-4 rounded bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          <div>
+            <label for="end_date" class="block text-gray-300 text-sm font-semibold mb-1">End Date:</label>
+            <input
+              type="date"
+              id="end_date"
+              v-model="end_date"
               class="w-full py-2 px-4 rounded bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
@@ -66,18 +75,31 @@
             ></textarea>
           </div>
 
-          <div class="flex justify-center pt-4">
+          <div class="flex justify-center pt-2">
             <button
-              class="group relative inline-flex items-center justify-center p-4 px-6 py-3 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out border-2 border-white rounded-full shadow-md transform hover:scale-105 hover:shadow-purple-500"
+              class="group relative inline-flex items-center justify-center p-2 px-4 py-2 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out border-2 border-white rounded-full shadow-md transform hover:scale-105 hover:shadow-purple-500 text-sm"
               @click="getRecommendations"
+            >
+              <span class="absolute inset-0 flex items-center justify-center w-full h-full bg-gray-900"></span>
+              <span class="relative text-white group-hover:text-white">Generate Recommendations</span>
+            </button>
+          </div>
+          
+          <div v-if="loading" class="text-center text-gray-300">
+            Preparing, please wait...
+          </div>
+          <div class="flex justify-center pt-2" v-if="recommendations.length > 0 && !loading" >
+            <button
+              class="group relative inline-flex items-center justify-center p-2 px-4 py-2 overflow-hidden font-medium text-indigo-600 transition duration-300 ease-out border-2 border-white rounded-full shadow-md transform hover:scale-105 hover:shadow-purple-500 text-sm"
+              @click="downloadPdf"
             >
               <span class="absolute inset-0 flex items-center justify-center w-full h-full bg-gray-900"></span>
               <span class="absolute right-0 w-10 h-10 duration-200 transform translate-x-full group-hover:translate-x-0 ease">
                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </span>
-              <span class="relative text-white group-hover:text-white">Get Recommendations</span>
+              </svg>
+            </span>
+              <span class="relative text-white group-hover:text-white">Download PDF</span>
             </button>
           </div>
         </div>
@@ -90,17 +112,35 @@
 import travelImage1 from '../assets/img1.avif';
 import travelImage2 from '../assets/img2.jpg';
 import travelImage3 from '../assets/img3.png';
+import Recommendations from './recommendations.vue';
+import { generatePdf } from '../services/pdfDesign';
 
 export default {
+  components: {
+    Recommendations
+  },
   data() {
     return {
       from_city: '',
       destination_city: '',
       interests: '',
-      travel_date: new Date().toISOString().split('T')[0], // Default to today
+      start_date: new Date().toISOString().split('T')[0],
+      end_date: new Date().toISOString().split('T')[0],
       images: [travelImage1, travelImage2, travelImage3],
       currentImageIndex: 0,
+      recommendations: [],
+      loading: false,
     };
+  },
+  watch: {
+    loading(newLoading) {
+      if (newLoading) {
+        // You can add animation logic here if needed
+        console.log("Loading started...");
+      } else {
+        console.log("Loading finished.");
+      }
+    }
   },
   mounted() {
     setInterval(() => {
@@ -108,12 +148,38 @@ export default {
     }, 3000);
   },
   methods: {
-    getRecommendations() {
-      console.log('From City:', this.from_city);
-      console.log('Destination:', this.destination_city);
-      console.log('Travel Date:', this.travel_date);
-      console.log('Interests:', this.interests);
-      // API call logic goes here
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString(undefined, options);
+    },
+    async getRecommendations() {
+      this.loading = true;
+      try {
+        const response = await fetch('http://localhost:5000/api/recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from_city: this.from_city,
+            destination_city: this.destination_city,
+            start_date: this.formatDate(this.start_date),
+            end_date: this.formatDate(this.end_date),
+            interests: this.interests,
+          }),
+        });
+
+        const data = await response.json();
+        this.recommendations = data.recommendations;
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    downloadPdf() {
+      generatePdf(this.recommendations);
     },
   },
 };

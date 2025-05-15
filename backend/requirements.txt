@@ -1,0 +1,4 @@
+crewai[tools]==0.119.0
+langchain-community==0.3.24
+flask
+flask_cors

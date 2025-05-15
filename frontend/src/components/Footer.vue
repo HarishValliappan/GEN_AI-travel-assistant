@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white w-screen">
+  <footer class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white py-8 w-screen">
     <div class="container mx-auto text-center">
       <p>&copy; 2025 WayfarerAI. All rights reserved.</p>
       <ul class="mt-4">
@@ -10,3 +10,7 @@
     </div>
   </footer>
 </template>
+
+<script>
+export default {};
+</script>

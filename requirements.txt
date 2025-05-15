@@ -1,8 +1,0 @@
-streamlit
-crewai[tools]
-crewai
-langchain
-langchain_community
-crewai_tools
-duckduckgo-search
-os
