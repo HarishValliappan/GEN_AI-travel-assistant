@@ -1,8 +1,14 @@
 # GEN_AI-travel-assistant
 
-An intelligent travel planning assistant powered by [CrewAI](https://docs.crewai.com/), enabling personalized, multi-agent based itinerary generation. This Streamlit-based application utilizes generative AI to suggest destinations, hotels, and activities based on user preferences such as travel type, destination, budget, and month of travel.
+An intelligent travel planning assistant powered by [CrewAI](https://docs.crewai.com/), enabling personalized, multi-agent based itinerary generation. This application consists of a backend and a frontend. The backend utilizes generative AI to suggest destinations, hotels, and activities based on user preferences such as travel type, destination, budget, and month of travel. The frontend provides an interactive user interface to access these recommendations.
 
 ---
+
+Check out the website screenshots:
+
+![Website Screenshot 1](frontend/src/assets/Screenshot1.png)
+![Website Screenshot 2](frontend/src/assets/Screenshot2.png)
+
 
 ## 🚀 Features
 
@@ -19,11 +25,21 @@ An intelligent travel planning assistant powered by [CrewAI](https://docs.crewai
 
 
 GEN_AI-travel-assistant/
-├── agents.py # Defines AI agents and their roles
-├── app.py # Streamlit UI and main CrewAI logic
-├── tasks.py # Tasks assigned to each agent
-├── utils.py # Helper functions
-└── requirements.txt # Project dependencies
+├── backend/ # Backend code
+│   ├── agents.py # Defines AI agents and their roles
+│   ├── main.py # Flask API and CrewAI logic
+│   ├── tasks.py # Tasks assigned to each agent
+│   ├── utils.py # Helper functions
+│   └── requirements.txt # Project dependencies
+├── frontend/ # Frontend code
+│   ├── src/ # Source code
+│   │   ├── components/ # Vue components
+│   │   ├── services/ # API services
+│   │   ├── assets/ # Images and other assets
+│   │   └── App.vue # Main Vue component
+│   ├── index.html # Main HTML file
+│   └── package.json # Frontend dependencies
+└── README.md # Project documentation
 
 ## 🧠 Agents
 
@@ -65,4 +81,17 @@ Tasks are executed in parallel using `crew.kickoff()`.
 ```bash
 git clone https://github.com/HarishValliappan/GEN_AI-travel-assistant.git
 cd GEN_AI-travel-assistant
+
+### 🔧 Backend Setup
+```bash
+cd backend
 pip install -r requirements.txt
+```
+
+### 🚀 Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
